@@ -7,6 +7,8 @@ A drop-in payment UI SDK for Android that lets you accept payments through Xendi
 [![License](https://img.shields.io/badge/license-Apache%202.0-lightgrey)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Android%2026%2B-green)](https://developer.android.com/)
 
+> 💡 **Migrating from `xendit-sdk-android`?** Check out our [Migration Guide](MIGRATION_GUIDE.md) for step-by-step instructions.
+
 ## Features
 
 - **Pre-built payment sheet** — Full payment UI with channel selection, form validation, and error handling out of the box.
@@ -382,6 +384,7 @@ If your app is not registered and approved for Google Pay production access, Goo
 
 | Resource | Description |
 |----------|-------------|
+| [Migration Guide](MIGRATION_GUIDE.md) | Guide for migrating from legacy `xendit-sdk-android` to Components SDK. |
 | [API Reference](https://developers.xendit.co) | Full API documentation for session creation and payment flows. |
 | [Example App](example-app/) | Sample Jetpack Compose app demonstrating SDK integration. |
 
