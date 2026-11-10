@@ -61,7 +61,12 @@ internal object FormCheckerUtil {
     val phoneUtil = PhoneNumberUtil.getInstance()
     return try {
       val parsed = phoneUtil.parse(trimmed, normalizedRegion)
-      phoneUtil.isValidNumberForRegion(parsed, normalizedRegion)
+      if (normalizedRegion.isEmpty()) {
+        phoneUtil.isValidNumber(parsed)
+      } else {
+        phoneUtil.isValidNumberForRegion(parsed, normalizedRegion) ||
+          (trimmed.startsWith("+") && phoneUtil.isValidNumber(parsed))
+      }
     } catch (_: NumberParseException) {
       false
     } catch (_: Exception) {

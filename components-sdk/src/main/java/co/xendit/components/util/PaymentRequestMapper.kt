@@ -35,8 +35,7 @@ internal object PaymentRequestMapper {
           if (field.type is FieldType.PhoneNumber) {
             val countryCodeKey = "${propertyKey}_country_code"
             val countryCode = formValues[countryCodeKey] ?: ""
-            val dialCode = Country.fromCode(countryCode)?.dialCode ?: ""
-            finalValue = "+$dialCode$value"
+            finalValue = formatPhoneNumber(value, countryCode)
           }
           putFlatValue(flatMap, prop, finalValue)
         }
@@ -64,7 +63,12 @@ internal object PaymentRequestMapper {
           } else {
             val key = prop.firstOrNull()?.toString() ?: ""
             if (key.isNotEmpty()) {
-              val finalValue = if (isSensitive) encrypt(value, publicKey, sessionId) else value
+              var finalValue = if (isSensitive) encrypt(value, publicKey, sessionId) else value
+              if (field.type is FieldType.PhoneNumber) {
+                val countryCodeKey = "${propertyKey}_country_code"
+                val countryCode = formValues[countryCodeKey] ?: ""
+                finalValue = formatPhoneNumber(value, countryCode)
+              }
               putFlatValue(flatMap, key, finalValue)
             }
           }
@@ -73,6 +77,16 @@ internal object PaymentRequestMapper {
     }
 
     return unflatten(flatMap)
+  }
+
+  private fun formatPhoneNumber(value: String, countryCode: String): String {
+    if (value.startsWith("+")) return value
+    val dialCode = Country.fromCode(countryCode)?.dialCode.orEmpty()
+    return if (dialCode.isNotEmpty() && value.startsWith(dialCode)) {
+      "+$value"
+    } else {
+      "+$dialCode$value"
+    }
   }
 
   private fun putFlatValue(flatMap: MutableMap<String, Any>, key: String, value: Any) {

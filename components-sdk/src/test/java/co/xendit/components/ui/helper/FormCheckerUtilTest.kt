@@ -117,6 +117,19 @@ class FormCheckerUtilTest {
   }
 
   @Test
+  fun isValidPhoneNumber_internationalNumberWithEmptyOrDifferentRegion_returnsTrue() {
+    val phoneUtil = PhoneNumberUtil.getInstance()
+    val exampleUs = phoneUtil.getExampleNumber("US")
+    val usE164 = phoneUtil.format(exampleUs, PhoneNumberUtil.PhoneNumberFormat.E164)
+
+    // With empty regionCode
+    assertTrue(FormCheckerUtil.isValidPhoneNumber(usE164, ""))
+
+    // With different regionCode
+    assertTrue(FormCheckerUtil.isValidPhoneNumber(usE164, "ID"))
+  }
+
+  @Test
   fun formatAmount_returnsEmpty_whenAmountOrCurrencyMissing() {
     assertEquals("", CurrencyUtil.formatAmount(null, "IDR"))
     assertEquals("", CurrencyUtil.formatAmount(BigDecimal.valueOf(1000), null))

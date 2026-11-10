@@ -143,6 +143,76 @@ class PaymentRequestMapperTest {
           flags = null
         )
       )
+    val formValues = mapOf(
+      "card_details.cardholder_phone_number" to "+18000032341",
+      "card_details.cardholder_phone_number_country_code" to "US"
+    )
+
+    val result =
+      PaymentRequestMapper.mapFormValuesToChannelProperties(
+        formValues,
+        fields,
+        "pub_key",
+        "session_id"
+      )
+
+    val cardDetails = result["card_details"] as Map<*, *>
+    assertEquals("+18000032341", cardDetails["cardholder_phone_number"])
+  }
+
+  @Test
+  fun mapFormValuesToChannelProperties_avoidsDuplicateDialCodeWhenEnteredWithoutPlus() {
+    val fields =
+      listOf(
+        ChannelFormField(
+          label = "Mobile Number",
+          groupLabel = null,
+          placeholder = "8000032341",
+          type = FieldType("phone_number", null, null, null, null, null),
+          channelProperty = "card_details.cardholder_phone_number",
+          initialValue = null,
+          disabled = false,
+          required = true,
+          span = 2,
+          join = false,
+          flags = null
+        )
+      )
+    val formValues = mapOf(
+      "card_details.cardholder_phone_number" to "18000032341",
+      "card_details.cardholder_phone_number_country_code" to "US"
+    )
+
+    val result =
+      PaymentRequestMapper.mapFormValuesToChannelProperties(
+        formValues,
+        fields,
+        "pub_key",
+        "session_id"
+      )
+
+    val cardDetails = result["card_details"] as Map<*, *>
+    assertEquals("+18000032341", cardDetails["cardholder_phone_number"])
+  }
+
+  @Test
+  fun mapFormValuesToChannelProperties_prependsPlusWhenCountryCodeMissing() {
+    val fields =
+      listOf(
+        ChannelFormField(
+          label = "Mobile Number",
+          groupLabel = null,
+          placeholder = "8000032341",
+          type = FieldType("phone_number", null, null, null, null, null),
+          channelProperty = "card_details.cardholder_phone_number",
+          initialValue = null,
+          disabled = false,
+          required = true,
+          span = 2,
+          join = false,
+          flags = null
+        )
+      )
     val formValues = mapOf("card_details.cardholder_phone_number" to "8000032341")
 
     val result =
